@@ -57,10 +57,10 @@ class PDFMerger
      * Merges your provided PDFs and outputs to specified location.
      * @param $outputmode
      * @param $outputname
-     * @param $orientation
+     * @param $orientation - [Optional] If not specified, the orientation will be automatically determined per page
      * @return PDF
      */
-    public function merge($outputmode = 'browser', $outputpath = 'newfile.pdf', $orientation = 'P')
+    public function merge($outputmode = 'browser', $outputpath = 'newfile.pdf', $orientation = null)
     {
         if (!isset($this->_files) || !is_array($this->_files)) {
             throw new Exception("No PDFs to merge.");
@@ -82,6 +82,9 @@ class PDFMerger
                     $template   = $fpdi->importPage($i);
                     $size       = $fpdi->getTemplateSize($template);
 
+                    if (is_null($orientation)) {
+                        $fileorientation = ($size['w'] > $size['h']) ? "L" : "P";
+                    }
                     $fpdi->AddPage($fileorientation, array($size['w'], $size['h']));
                     $fpdi->useTemplate($template);
                 }
